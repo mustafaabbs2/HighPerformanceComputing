@@ -1,0 +1,103 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Release",
+            "type": "shell",
+            "command": "cmake --build . --config Release",
+            "options": {
+                "cwd": "${workspaceRoot}/build/Release"
+            },
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Build Debug",
+            "type": "shell",
+            "command": "cmake --build . --config Debug",
+            "options": {
+                "cwd": "${workspaceRoot}/build/Debug"
+            },
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+        {
+            "label": "Conan install (Debug)",
+            "type": "shell",
+            "windows": {
+                "command": "pwsh",
+                "args": [
+                    "-File",
+                    "${workspaceFolder}/BuildScripts/conan_install.ps1",
+                    "Debug"
+                ],
+            },
+            "command": "./conan_install.sh Debug",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceRoot}/BuildScripts"
+            }
+        },
+        {
+            "label": "Conan install (Release)",
+            "type": "shell",
+            "windows": {
+                "command": "pwsh",
+                "args": [
+                    "-File",
+                    "${workspaceFolder}/BuildScripts/conan_install.ps1",
+                    "Release"
+                ],
+            },
+            "linux": {
+                "command": "./conan_install.sh",
+                "args": [
+                    "Release"
+                ],
+            },
+            "osx": {
+                "command": "./conan_install_macos.sh",
+                "args": [
+                    "Release"
+                ],
+            },
+            "command": "./conan_install.sh Release",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceRoot}/BuildScripts"
+            }
+        },
+        {
+            "label": "CMake Configure (Debug)",
+            "type": "shell",
+            "windows": {
+                "command": "cmake --preset=MSVC_Debug",
+            },
+            "command": "cmake --preset=Linux_Debug",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            }
+        },
+        {
+            "label": "CMake Configure (Release)",
+            "type": "shell",
+            "windows": {
+                "command": "cmake --preset=MSVC_Release",
+            },
+            "command": "cmake --preset=Linux_Release",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            }
+        }
+    ]
+}
