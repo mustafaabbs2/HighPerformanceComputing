@@ -1,0 +1,118 @@
+{
+	"version": 2,
+	"cmakeMinimumRequired": {
+		"major": 3,
+		"minor": 15,
+		"patch": 0
+	},
+	"configurePresets": [
+		{
+			"name": "MSVC_Base",
+			"displayName": "MSVC",
+			"description": "MSVC",
+			"generator": "Visual Studio 17 2022",
+			"architecture": "x64",
+			"toolset": "v142,version=14.29",
+			"binaryDir": "${sourceDir}/build",
+			"hidden": true,
+			"warnings": {
+				"dev": false
+			},
+			"cacheVariables": {
+				"CMAKE_SYSTEM_VERSION": "10.0.18362.0",
+				"CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install"
+			}
+		},
+		{
+			"name": "MSVC_Debug",
+			"inherits": "MSVC_Base",
+			"displayName": "MSVC Debug",
+			"description": "MSVC Debug",
+			"binaryDir": "${sourceDir}/build/Debug",
+			"hidden": false,
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Debug",
+				"CMAKE_MODULE_PATH": "${sourceDir}/build/Debug"
+			}
+		},
+		{
+			"name": "MSVC_Release",
+			"inherits": "MSVC_Base",
+			"displayName": "MSVC Release",
+			"description": "MSVC Release",
+			"binaryDir": "${sourceDir}/build/Release",
+			"hidden": false,
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Release",
+				"CMAKE_MODULE_PATH": "${sourceDir}/build/Release"
+			}
+		},
+		{
+			"name": "Linux_Base",
+			"displayName": "Linux",
+			"description": "Linux",
+			"generator": "Ninja",
+			"binaryDir": "${sourceDir}/build",
+			"hidden": true,
+			"warnings": {
+				"dev": false
+			},
+			"cacheVariables": {
+				"CMAKE_C_COMPILER": "gcc",
+				"CMAKE_CXX_COMPILER": "g++",
+				"CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install"
+			}
+		},
+		{
+			"name": "Linux_Debug",
+			"inherits": "Linux_Base",
+			"displayName": "Linux Debug",
+			"description": "Linux Debug",
+			"binaryDir": "${sourceDir}/build/Debug",
+			"hidden": false,
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Debug",
+				"CMAKE_MODULE_PATH": "${sourceDir}/build/Debug"
+			}
+		},
+		{
+			"name": "Linux_Release",
+			"inherits": "Linux_Base",
+			"displayName": "Linux Release",
+			"description": "Linux Release",
+			"binaryDir": "${sourceDir}/build/Release",
+			"hidden": false,
+			"cacheVariables": {
+				"CMAKE_BUILD_TYPE": "Release",
+				"CMAKE_MODULE_PATH": "${sourceDir}/build/Release"
+			}
+		}
+	],
+	"buildPresets": [
+		{
+			"name": "MSVC_Debug_Build",
+			"configurePreset": "MSVC_Debug",
+			"configuration": "Debug"
+		},
+		{
+			"name": "MSVC_Release_Build",
+			"configurePreset": "MSVC_Release",
+			"configuration": "Release"
+		},
+		{
+			"name": "MSVC_RelWithDebInfo_Build",
+			"configurePreset": "MSVC_Release",
+			"configuration": "RelWithDebInfo"
+		},
+		{
+			"name": "Linux_Debug_Build",
+			"configurePreset": "Linux_Debug",
+			"configuration": "Debug"
+		},
+		{
+			"name": "Linux_Release_Build",
+			"configurePreset": "Linux_Release",
+			"configuration": "Release"
+		}
+	]
+}
