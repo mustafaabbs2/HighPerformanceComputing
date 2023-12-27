@@ -6,6 +6,11 @@
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 
+#include "../common/common.h"
+#include "../common/cuda_common.cuh"
+
+#include "device_launch_parameters.h"
+
 //assume grid is 1D and block is 1D then nx = size
 __global__ void sum_arrays_1Dgrid_1Dblock(float* a, float* b, float* c, int nx)
 {

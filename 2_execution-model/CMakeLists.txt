@@ -4,7 +4,6 @@ project(ExecutionModel LANGUAGES CXX CUDA) #this will automatically compile CUDA
 
 message("Configuring ExecutionModel..")
 
-#2_10_profiling.cu -> needs correction
 
 set(CUDA_SOURCES
     2_1_blockdim.cu
@@ -16,6 +15,7 @@ set(CUDA_SOURCES
     2_7_uniqueId_1d.cu
     2_8_uniqueId_2d.cu
     2_9_uniqueId_3d.cu
+    2_10_profiling.cu
     2_11_warp-divergence.cu
     2_12_warp-unroll.cu
     2_13_matrixmul_naive.cu
@@ -39,6 +39,7 @@ set(EXECS
     2_7_uniqueId_1d
     2_8_uniqueId_2d
     2_9_uniqueId_3d
+    2_10_profiling
     2_11_warp-divergence
     2_12_warp-unroll
     2_13_matrixmul_naive
@@ -55,10 +56,14 @@ foreach(EXEC ${EXECS})
     
     # Add include directories
     target_include_directories(${EXEC} PRIVATE 
-    ${CUDA_INCLUDE_DIRS})
+    ${CUDA_INCLUDE_DIRS}
+    common/
+    )
 
     target_link_libraries(${EXEC} 
-    ${CUDA_LIBRARIES})
+    ${CUDA_LIBRARIES}
+    commonlib
+    )
 
 endforeach()
 

@@ -9,25 +9,7 @@
 #include <cublas_v2.h>
 #include <math.h>
 
-//initialize a vector of size n with random values
-
-void vector_init(float* v, int n)
-{
-	for(int i = 0; i < n; i++)
-	{
-		v[i] = rand() / (float)RAND_MAX;
-	}
-}
-
-//verify the result
-
-void verify_result(float* a, float* b, float* c, int n)
-{
-	for(int i = 0; i < n; i++)
-	{
-		assert(fabs(a[i] + b[i] - c[i]) < 1e-3);
-	}
-}
+#include "../common/common.h"
 
 int main()
 {

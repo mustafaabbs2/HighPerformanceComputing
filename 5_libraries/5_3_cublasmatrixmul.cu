@@ -9,23 +9,11 @@
 #include <cublas_v2.h>
 #include <math.h>
 
+#include "../common/common.h"
 #include <curand.h> // to initialize the matrix with random values on the GPU side
 
 //verify the result
 // note cublas assumes column major order
-
-void verify_result(float* a, float* b, float* c, int n)
-{
-	float temp;
-
-	for(int i = 0; i < n; i++)
-	{
-		for(int j = 0; i < n; i++)
-		{
-			temp = 0;
-		}
-	}
-}
 
 int main()
 {

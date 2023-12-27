@@ -1,29 +1,29 @@
 cmake_minimum_required(VERSION 3.15.0 FATAL_ERROR)
 
-project(MemoryModel LANGUAGES CXX CUDA) #this will automatically compile CUDA sources with nvcc
+project(Events LANGUAGES CXX CUDA) #this will automatically compile CUDA sources with nvcc
 
-message("Configuring MemoryModel..")
+message("Configuring Events..")
 
 
 # List of CUDA source files
 set(CUDA_SOURCES
-    3_1_intro-mem-model.cu
-    3_2_registers.cu
-    3_3_pinnedmem.cu
-    3_4_zerocopymem.cu
-    3_5_sumArray_unifiedmemory.cu
-    3_6_globalVariable.cu
+    4_1_hello-world_timing.cu
+    4_3_stream.cu
+    4_4_simplenullstream.cu
+    4_5_streams_sumarray.cu
+    4_6_blocking_nonblocking.cu
+    4_7_interstreamdependencies.cu
 )
 
 set_source_files_properties(${CUDA_SOURCES} PROPERTIES LANGUAGE CUDA)
 
 set(EXECS
-    3_1_intro-mem-model
-    3_2_registers
-    3_3_pinnedmem
-    3_4_zerocopymem
-    3_5_sumArray_unifiedmemory
-    3_6_globalVariable
+    4_1_hello-world_timing
+    4_3_stream
+    4_4_simplenullstream
+    4_5_streams_sumarray
+    4_6_blocking_nonblocking
+    4_7_interstreamdependencies
 )
 
 foreach(EXEC ${EXECS})
