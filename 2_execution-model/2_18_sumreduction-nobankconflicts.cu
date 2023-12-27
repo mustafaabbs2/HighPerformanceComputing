@@ -1,14 +1,15 @@
+#include <assert.h>
 #include <cuda_runtime.h>
 #include <device_launch_parameters.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <assert.h>
 #include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #define SIZE 256
 #define SHMEM_SIZE 256 * 4
 
-__global__ void sum_reduction(int *v, int *v_r) {
+__global__ void sum_reduction(int* v, int* v_r)
+{
 	// Allocate shared memory
 	__shared__ int partial_sum[SHMEM_SIZE];
 
@@ -20,9 +21,11 @@ __global__ void sum_reduction(int *v, int *v_r) {
 	__syncthreads();
 
 	// Start at 1/2 block stride and divide by two each iteration
-	for (int s = blockDim.x / 2; s > 0; s >>= 1) { //s>>=1 means s/2
+	for(int s = blockDim.x / 2; s > 0; s >>= 1)
+	{ //s>>=1 means s/2
 		// Each thread does work unless it is further than the stride
-		if (threadIdx.x < s) {
+		if(threadIdx.x < s)
+		{
 			partial_sum[threadIdx.x] += partial_sum[threadIdx.x + s];
 		}
 		__syncthreads();
@@ -30,18 +33,22 @@ __global__ void sum_reduction(int *v, int *v_r) {
 
 	// Let the thread 0 for this block write it's result to main memory
 	// Result is inexed by this block
-	if (threadIdx.x == 0) {
+	if(threadIdx.x == 0)
+	{
 		v_r[blockIdx.x] = partial_sum[0];
 	}
 }
 
-void initialize_vector(int *v, int n) {
-	for (int i = 0; i < n; i++) {
-		v[i] = 1;//rand() % 10;
+void initialize_vector(int* v, int n)
+{
+	for(int i = 0; i < n; i++)
+	{
+		v[i] = 1; //rand() % 10;
 	}
 }
 
-int main() {
+int main()
+{
 	// Vector size
 	int n = 1 << 16;
 	size_t bytes = n * sizeof(int);
@@ -69,9 +76,9 @@ int main() {
 	int GRID_SIZE = n / TB_SIZE;
 
 	// Call kernel
-	sum_reduction <<<GRID_SIZE, TB_SIZE >>> (d_v, d_v_r);
+	sum_reduction<<<GRID_SIZE, TB_SIZE>>>(d_v, d_v_r);
 
-	sum_reduction <<<1, TB_SIZE >>> (d_v_r, d_v_r);
+	sum_reduction<<<1, TB_SIZE>>>(d_v_r, d_v_r);
 
 	// Copy to host;
 	cudaMemcpy(h_v_r, d_v_r, bytes, cudaMemcpyDeviceToHost);

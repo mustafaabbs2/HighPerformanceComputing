@@ -4,34 +4,33 @@
 //need these CUDA headers
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
-//Contains error check 
+//Contains error check
 #include "../common/cuda_common.cuh"
 //Contains self written helper functions
 #include "../common/common.h"
 
-__global__ void reduction_kernel_warp_unrolling(int * int_array,
-	int * temp_array, int size)
+__global__ void reduction_kernel_warp_unrolling(int* int_array, int* temp_array, int size)
 {
 	int tid = threadIdx.x;
-	
+
 	//element index for this thread
-	int index = blockDim.x * blockIdx.x  + threadIdx.x;
+	int index = blockDim.x * blockIdx.x + threadIdx.x;
 
 	//local data pointer
-	int * i_data = int_array + blockDim.x * blockIdx.x ;
+	int* i_data = int_array + blockDim.x * blockIdx.x;
 
-	for (int offset = blockDim.x/2; offset >= 64; offset = offset/2)
+	for(int offset = blockDim.x / 2; offset >= 64; offset = offset / 2)
 	{
-		if (tid < offset)
+		if(tid < offset)
 		{
 			i_data[tid] += i_data[tid + offset];
 		}
 		__syncthreads();
 	}
 
-	if (tid < 32)
+	if(tid < 32)
 	{
-		volatile int * vsmem = i_data;
+		volatile int* vsmem = i_data;
 		vsmem[tid] += vsmem[tid + 32];
 		vsmem[tid] += vsmem[tid + 16];
 		vsmem[tid] += vsmem[tid + 8];
@@ -40,13 +39,13 @@ __global__ void reduction_kernel_warp_unrolling(int * int_array,
 		vsmem[tid] += vsmem[tid + 1];
 	}
 
-	if (tid == 0)
+	if(tid == 0)
 	{
 		temp_array[blockIdx.x] = i_data[0];
 	}
 }
 
-int main(int argc, char ** argv)
+int main(int argc, char** argv)
 {
 	printf("Running parallel reduction with warp unrolling kernel \n");
 
@@ -54,7 +53,7 @@ int main(int argc, char ** argv)
 	int byte_size = size * sizeof(int);
 	int block_size = 128;
 
-	int * h_input, *h_ref;
+	int *h_input, *h_ref;
 	h_input = (int*)malloc(byte_size);
 
 	initialize(h_input, size, INIT_RANDOM);
@@ -66,25 +65,24 @@ int main(int argc, char ** argv)
 
 	printf("Kernel launch parameters || grid : %d, block : %d \n", grid.x, block.x);
 
-	int temp_array_byte_size = sizeof(int)* grid.x;
+	int temp_array_byte_size = sizeof(int) * grid.x;
 
 	h_ref = (int*)malloc(temp_array_byte_size);
 
-	int * d_input, *d_temp;
+	int *d_input, *d_temp;
 	gpuErrchk(cudaMalloc((void**)&d_input, byte_size));
 	gpuErrchk(cudaMalloc((void**)&d_temp, temp_array_byte_size));
 
 	gpuErrchk(cudaMemset(d_temp, 0, temp_array_byte_size));
-	gpuErrchk(cudaMemcpy(d_input, h_input, byte_size,
-		cudaMemcpyHostToDevice));
+	gpuErrchk(cudaMemcpy(d_input, h_input, byte_size, cudaMemcpyHostToDevice));
 
-	reduction_kernel_warp_unrolling <<< grid, block >> > (d_input, d_temp, size);
+	reduction_kernel_warp_unrolling<<<grid, block>>>(d_input, d_temp, size);
 
 	gpuErrchk(cudaDeviceSynchronize());
 	gpuErrchk(cudaMemcpy(h_ref, d_temp, temp_array_byte_size, cudaMemcpyDeviceToHost));
 
 	int gpu_result = 0;
-	for (int i = 0; i < grid.x; i++)
+	for(int i = 0; i < grid.x; i++)
 	{
 		gpu_result += h_ref[i];
 	}

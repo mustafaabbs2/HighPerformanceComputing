@@ -1,9 +1,9 @@
+#include <assert.h>
 #include <cuda_runtime.h>
 #include <device_launch_parameters.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <assert.h>
 #include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #define SIZE 256
 #define SHMEM_SIZE 256 * 4
@@ -11,7 +11,8 @@
 // For last iteration (saves useless work)
 // Use volatile to prevent caching in registers (compiler optimization)
 // No __syncthreads() necessary!
-__device__ void warpReduce(volatile int* shmem_ptr, int t) {
+__device__ void warpReduce(volatile int* shmem_ptr, int t)
+{
 	shmem_ptr[t] += shmem_ptr[t + 32];
 	shmem_ptr[t] += shmem_ptr[t + 16];
 	shmem_ptr[t] += shmem_ptr[t + 8];
@@ -20,7 +21,8 @@ __device__ void warpReduce(volatile int* shmem_ptr, int t) {
 	shmem_ptr[t] += shmem_ptr[t + 1];
 }
 
-__global__ void sum_reduction(int *v, int *v_r) {
+__global__ void sum_reduction(int* v, int* v_r)
+{
 	// Allocate shared memory
 	__shared__ int partial_sum[SHMEM_SIZE];
 
@@ -37,32 +39,39 @@ __global__ void sum_reduction(int *v, int *v_r) {
 
 	// Start at 1/2 block stride and divide by two each iteration
 	// Stop early (call device function instead)
-	for (int s = blockDim.x / 2; s > 32; s >>= 1) {
+	for(int s = blockDim.x / 2; s > 32; s >>= 1)
+	{
 		// Each thread does work unless it is further than the stride
-		if (threadIdx.x < s) {
+		if(threadIdx.x < s)
+		{
 			partial_sum[threadIdx.x] += partial_sum[threadIdx.x + s];
 		}
 		__syncthreads();
 	}
 
-	if (threadIdx.x < 32) {
+	if(threadIdx.x < 32)
+	{
 		warpReduce(partial_sum, threadIdx.x);
 	}
 
 	// Let the thread 0 for this block write it's result to main memory
 	// Result is inexed by this block
-	if (threadIdx.x == 0) {
+	if(threadIdx.x == 0)
+	{
 		v_r[blockIdx.x] = partial_sum[0];
 	}
 }
 
-void initialize_vector(int *v, int n) {
-	for (int i = 0; i < n; i++) {
-		v[i] = 1;//rand() % 10;
+void initialize_vector(int* v, int n)
+{
+	for(int i = 0; i < n; i++)
+	{
+		v[i] = 1; //rand() % 10;
 	}
 }
 
-int main() {
+int main()
+{
 	// Vector size
 	int n = 1 << 16;
 	size_t bytes = n * sizeof(int);
@@ -90,9 +99,9 @@ int main() {
 	int GRID_SIZE = n / TB_SIZE / 2;
 
 	// Call kernel
-	sum_reduction << <GRID_SIZE, TB_SIZE >> > (d_v, d_v_r);
+	sum_reduction<<<GRID_SIZE, TB_SIZE>>>(d_v, d_v_r);
 
-	sum_reduction << <1, TB_SIZE >> > (d_v_r, d_v_r);
+	sum_reduction<<<1, TB_SIZE>>>(d_v_r, d_v_r);
 
 	// Copy to host;
 	cudaMemcpy(h_v_r, d_v_r, bytes, cudaMemcpyDeviceToHost);
@@ -105,7 +114,6 @@ int main() {
 	printf("COMPLETED SUCCESSFULLY\n");
 
 	return 0;
-    
-// nvcc -o 2_20_sumreduction-unroll 2_20_sumreduction-unroll.cu
 
+	// nvcc -o 2_20_sumreduction-unroll 2_20_sumreduction-unroll.cu
 }
