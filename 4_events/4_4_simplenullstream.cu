@@ -8,19 +8,18 @@
 //Contains self written helper functions
 #include "../common/common.h"
 
-
 __global__ void simple_kernel()
 {
 	printf("hello from the kernel \n");
 }
 
-int main(int argc, char ** argv)
+int main(int argc, char** argv)
 {
 	int dev = 0;
 	cudaDeviceProp deviceProp;
 	cudaGetDeviceProperties(&deviceProp, dev);
 
-	if (deviceProp.concurrentKernels == 0)
+	if(deviceProp.concurrentKernels == 0)
 	{
 		printf("> GPU does not support concurrent kernel execution \n");
 		printf("kernel execution will be serialized \n");
@@ -32,9 +31,9 @@ int main(int argc, char ** argv)
 	cudaStreamCreate(&str2);
 	cudaStreamCreate(&str3);
 
-	simple_kernel << <1, 1, 0, str1 >> > ();
-	simple_kernel << <1, 1, 0, str2 >> > ();
-	simple_kernel << <1, 1, 0, str3 >> > ();
+	simple_kernel<<<1, 1, 0, str1>>>();
+	simple_kernel<<<1, 1, 0, str2>>>();
+	simple_kernel<<<1, 1, 0, str3>>>();
 
 	cudaStreamDestroy(str1);
 	cudaStreamDestroy(str2);

@@ -8,16 +8,16 @@
 //Contains self written helper functions
 #include "../common/common.h"
 
-void sumArraysOnHostx(int *A, int *B, int *C, const int N)
+void sumArraysOnHostx(int* A, int* B, int* C, const int N)
 {
-	for (int idx = 0; idx < N; idx++)
+	for(int idx = 0; idx < N; idx++)
 		C[idx] = A[idx] + B[idx];
 }
 
-__global__ void sum_array_overlap(int * a, int * b, int * c, int N)
+__global__ void sum_array_overlap(int* a, int* b, int* c, int N)
 {
 	int gid = blockIdx.x * blockDim.x + threadIdx.x;
-	if (gid < N)
+	if(gid < N)
 	{
 		c[gid] = a[gid] + b[gid];
 	}
@@ -39,11 +39,11 @@ int main()
 	int *h_a, *h_b, *gpu_result, *cpu_result;
 
 	//allocate memory for host size pointers
-	cudaMallocHost((void**)&h_a,NO_BYTES);
+	cudaMallocHost((void**)&h_a, NO_BYTES);
 	cudaMallocHost((void**)&h_b, NO_BYTES);
 	cudaMallocHost((void**)&gpu_result, NO_BYTES);
 
-	cpu_result = (int *)malloc(NO_BYTES);
+	cpu_result = (int*)malloc(NO_BYTES);
 
 	//initialize h_a and h_b arrays randomly
 	initialize(h_a, INIT_ONE_TO_TEN);
@@ -53,35 +53,42 @@ int main()
 	sumArraysOnHostx(h_a, h_b, cpu_result, size);
 
 	int *d_a, *d_b, *d_c;
-	cudaMalloc((int **)&d_a, NO_BYTES);
-	cudaMalloc((int **)&d_b, NO_BYTES);
-	cudaMalloc((int **)&d_c, NO_BYTES);
+	cudaMalloc((int**)&d_a, NO_BYTES);
+	cudaMalloc((int**)&d_b, NO_BYTES);
+	cudaMalloc((int**)&d_c, NO_BYTES);
 
 	cudaStream_t streams[NUM_STREAMS];
 
-	for (int i = 0; i < NUM_STREAMS; i++)
+	for(int i = 0; i < NUM_STREAMS; i++)
 	{
 		cudaStreamCreate(&streams[i]);
 	}
 
 	//kernel launch parameters
 	dim3 block(block_size);
-	dim3 grid(ELEMENTS_PER_STREAM/block.x + 1);
+	dim3 grid(ELEMENTS_PER_STREAM / block.x + 1);
 
 	int offset = 0;
 
-	for (int  i = 0; i < NUM_STREAMS; i++)
+	for(int i = 0; i < NUM_STREAMS; i++)
 	{
 		offset = i * ELEMENTS_PER_STREAM;
-		cudaMemcpyAsync(&d_a[offset], &h_a[offset], BYTES_PER_STREAM, cudaMemcpyHostToDevice,streams[i]);
-		cudaMemcpyAsync(&d_b[offset], &h_b[offset], BYTES_PER_STREAM, cudaMemcpyHostToDevice,streams[i]);
+		cudaMemcpyAsync(
+			&d_a[offset], &h_a[offset], BYTES_PER_STREAM, cudaMemcpyHostToDevice, streams[i]);
+		cudaMemcpyAsync(
+			&d_b[offset], &h_b[offset], BYTES_PER_STREAM, cudaMemcpyHostToDevice, streams[i]);
 
-		sum_array_overlap << <grid, block, 0, streams[i] >> > (&d_a[offset], &d_b[offset], &d_c[offset], size);
+		sum_array_overlap<<<grid, block, 0, streams[i]>>>(
+			&d_a[offset], &d_b[offset], &d_c[offset], size);
 
-		cudaMemcpyAsync(&gpu_result[offset], &d_c[offset], BYTES_PER_STREAM, cudaMemcpyDeviceToHost,streams[i]);
+		cudaMemcpyAsync(&gpu_result[offset],
+						&d_c[offset],
+						BYTES_PER_STREAM,
+						cudaMemcpyDeviceToHost,
+						streams[i]);
 	}
-	
-	for (int i = 0; i < NUM_STREAMS; i++)
+
+	for(int i = 0; i < NUM_STREAMS; i++)
 	{
 		cudaStreamDestroy(streams[i]);
 	}

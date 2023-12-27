@@ -4,27 +4,28 @@
 //need these CUDA headers
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
-//Contains error check 
+//Contains error check
 #include "../common/cuda_common.cuh"
 //Contains self written helper functions
 #include "../common/common.h"
 
-
-__global__ void sumArrays(int *A, int *B, int *C, const int N)
+__global__ void sumArrays(int* A, int* B, int* C, const int N)
 {
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
 
-	if (i < N) C[i] = A[i] + B[i];
+	if(i < N)
+		C[i] = A[i] + B[i];
 }
 
-__global__ void sumArraysZeroCopy(int *A, int *B, int *C, const int N)
+__global__ void sumArraysZeroCopy(int* A, int* B, int* C, const int N)
 {
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
 
-	if (i < N) C[i] = A[i] + B[i];
+	if(i < N)
+		C[i] = A[i] + B[i];
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
 	// set up device
 	int dev = 0;
@@ -35,7 +36,7 @@ int main(int argc, char **argv)
 	cudaGetDeviceProperties(&deviceProp, dev);
 
 	// check if support mapped memory
-	if (!deviceProp.canMapHostMemory)
+	if(!deviceProp.canMapHostMemory)
 	{
 		printf("Device %d does not support mapping CPU host memory!\n", dev);
 		cudaDeviceReset();
@@ -45,7 +46,8 @@ int main(int argc, char **argv)
 	// set up data size of vectors
 	int power = 22;
 
-	if (argc > 1) power = atoi(argv[1]);
+	if(argc > 1)
+		power = atoi(argv[1]);
 
 	int nElem = 1 << power;
 	size_t nBytes = nElem * sizeof(int);
@@ -53,13 +55,13 @@ int main(int argc, char **argv)
 	// part 1: using device memory
 	// malloc host memory
 	int *h_A, *h_B, *hostRef, *gpuRef;
-	h_A = (int *)malloc(nBytes);
-	h_B = (int *)malloc(nBytes);
-	hostRef = (int *)malloc(nBytes);
-	gpuRef = (int *)malloc(nBytes);
+	h_A = (int*)malloc(nBytes);
+	h_B = (int*)malloc(nBytes);
+	hostRef = (int*)malloc(nBytes);
+	gpuRef = (int*)malloc(nBytes);
 
 	// initialize data at host side
-	initialize(h_A, nElem,INIT_ONE_TO_TEN);
+	initialize(h_A, nElem, INIT_ONE_TO_TEN);
 	initialize(h_B, nElem);
 	memset(gpuRef, 0, nBytes);
 
@@ -78,8 +80,8 @@ int main(int argc, char **argv)
 	dim3 block(iLen);
 	dim3 grid((nElem + block.x - 1) / block.x);
 
-	sumArrays << <grid, block >> >(d_A, d_B, d_C, nElem);
-	
+	sumArrays<<<grid, block>>>(d_A, d_B, d_C, nElem);
+
 	cudaDeviceSynchronize();
 	// copy kernel result back to host side
 	cudaMemcpy(gpuRef, d_C, nBytes, cudaMemcpyDeviceToHost);
@@ -94,8 +96,8 @@ int main(int argc, char **argv)
 
 	// part 2: using zerocopy memory for array A and B
 	// allocate zerocpy memory
-	cudaHostAlloc((void **)&h_A, nBytes, cudaHostAllocMapped);
-	cudaHostAlloc((void **)&h_B, nBytes, cudaHostAllocMapped);
+	cudaHostAlloc((void**)&h_A, nBytes, cudaHostAllocMapped);
+	cudaHostAlloc((void**)&h_B, nBytes, cudaHostAllocMapped);
 
 	// initialize data at host side
 	initialize(h_A, nElem, INIT_ONE_TO_TEN);
@@ -103,11 +105,11 @@ int main(int argc, char **argv)
 	memset(gpuRef, 0, nBytes);
 
 	// get the mapped device pointer
-	cudaHostGetDevicePointer((void **)&d_A, (void *)h_A, 0);
-	cudaHostGetDevicePointer((void **)&d_B, (void *)h_B, 0);
+	cudaHostGetDevicePointer((void**)&d_A, (void*)h_A, 0);
+	cudaHostGetDevicePointer((void**)&d_B, (void*)h_B, 0);
 
 	// execute kernel with zero copy memory
-	sumArraysZeroCopy << <grid, block >> >(d_A, d_B, d_C, nElem);
+	sumArraysZeroCopy<<<grid, block>>>(d_A, d_B, d_C, nElem);
 
 	cudaDeviceSynchronize();
 
@@ -126,7 +128,6 @@ int main(int argc, char **argv)
 	cudaDeviceReset();
 	return EXIT_SUCCESS;
 
-    //nvcc -link common.obj -o 3_4_zerocopymem .\3_4_zerocopymem.cu
-    //nvprof --print-gpu-trace
-
+	//nvcc -link common.obj -o 3_4_zerocopymem .\3_4_zerocopymem.cu
+	//nvprof --print-gpu-trace
 }

@@ -3,20 +3,20 @@
 //need these CUDA headers
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
-//Contains error check 
+//Contains error check
 #include "../common/cuda_common.cuh"
 //Contains self written helper functions
 #include "../common/common.h"
 
-__global__ void sumArrays(float *a, float *b, float *c, int size)
+__global__ void sumArrays(float* a, float* b, float* c, int size)
 {
 
-    int gid = blockIdx.x * blockDim.x + threadIdx.x; 
+	int gid = blockIdx.x * blockDim.x + threadIdx.x;
 
-    if(gid < size)
+	if(gid < size)
 	{
-        c[gid] = a[gid] + b[gid];
-    }
+		c[gid] = a[gid] + b[gid];
+	}
 }
 
 int main(int argc, char** argv)
@@ -25,7 +25,7 @@ int main(int argc, char** argv)
 	int size = 1 << 22;
 	int block_size = 128;
 
-	if (argc > 1)
+	if(argc > 1)
 		block_size = 1 << atoi(argv[1]);
 
 	printf("Block size selected: %d \n", block_size);
@@ -34,16 +34,15 @@ int main(int argc, char** argv)
 
 	printf("Input size : %d \n", size);
 
-	float * h_a, *h_b, *h_ref;
+	float *h_a, *h_b, *h_ref;
 	h_a = (float*)malloc(byte_size);
 	h_b = (float*)malloc(byte_size);
 	h_ref = (float*)malloc(byte_size);
 
-
-	if (!h_a)
+	if(!h_a)
 		printf("Host memory unallocated \n");
 
-	for (size_t i = 0; i < size; i++)
+	for(size_t i = 0; i < size; i++)
 	{
 		h_a[i] = i % 10;
 		h_b[i] = i % 7;
@@ -53,7 +52,12 @@ int main(int argc, char** argv)
 	dim3 grid((size + block.x - 1) / block.x);
 
 	printf("Kernel is lauched with grid(%d,%d,%d) and block(%d,%d,%d) \n",
-		grid.x, grid.y, grid.z, block.x, block.y, block.z);
+		   grid.x,
+		   grid.y,
+		   grid.z,
+		   block.x,
+		   block.y,
+		   block.z);
 
 	float *d_a, *d_b, *d_c;
 
@@ -65,7 +69,7 @@ int main(int argc, char** argv)
 	gpuErrchk(cudaMemcpy(d_a, h_a, byte_size, cudaMemcpyHostToDevice));
 	gpuErrchk(cudaMemcpy(d_b, h_b, byte_size, cudaMemcpyHostToDevice));
 
-	sumArrays << <grid, block >> > (d_a, d_b, d_c, size);
+	sumArrays<<<grid, block>>>(d_a, d_b, d_c, size);
 
 	gpuErrchk(cudaDeviceSynchronize());
 	gpuErrchk(cudaMemcpy(h_ref, d_c, byte_size, cudaMemcpyDeviceToHost));
@@ -78,5 +82,5 @@ int main(int argc, char** argv)
 	free(h_b);
 	free(h_a);
 
-    // nvprof --metrics gld_efficiency,gld_throughput,gld_transactions,gld_transactions_per_request .\a.exe <x>
+	// nvprof --metrics gld_efficiency,gld_throughput,gld_transactions,gld_transactions_per_request .\a.exe <x>
 }

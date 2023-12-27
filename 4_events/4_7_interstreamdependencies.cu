@@ -8,21 +8,20 @@
 //Contains self written helper functions
 #include "../common/common.h"
 
-
 __global__ void k1()
 {
 	int gid = blockDim.x * blockIdx.x + threadIdx.x;
-	if (gid == 0)
+	if(gid == 0)
 	{
 		printf("This is a test 1 \n");
 	}
 }
 
-int main(int argc, char ** argv)
+int main(int argc, char** argv)
 {
 	int size = 1 << 15;
 
-	cudaStream_t stm1,stm2,stm3;
+	cudaStream_t stm1, stm2, stm3;
 	cudaStreamCreate(&stm1);
 	cudaStreamCreate(&stm2);
 	cudaStreamCreate(&stm3);
@@ -32,13 +31,13 @@ int main(int argc, char ** argv)
 
 	dim3 block(128);
 	dim3 grid(size / block.x);
-	
-	k1 << <grid, block, 0, stm1 >> > ();
+
+	k1<<<grid, block, 0, stm1>>>();
 	cudaEventRecord(event1, stm1);
 	cudaStreamWaitEvent(stm3, event1, 0);
 
-	k1 << <grid, block, 0, stm2 >> > ();
-	k1 << <grid, block, 0, stm3 >> > ();
+	k1<<<grid, block, 0, stm2>>>();
+	k1<<<grid, block, 0, stm3>>>();
 
 	cudaEventDestroy(event1);
 

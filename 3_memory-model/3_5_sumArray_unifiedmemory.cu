@@ -4,16 +4,16 @@
 //need these CUDA headers
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
-//Contains error check 
+//Contains error check
 #include "../common/cuda_common.cuh"
 //Contains self written helper functions
 #include "../common/common.h"
 
-__global__ void unified_memory(float* a, float* b, float *c, int size)
+__global__ void unified_memory(float* a, float* b, float* c, int size)
 {
 	int gid = blockIdx.x * blockDim.x + threadIdx.x;
 
-	if (gid < size)
+	if(gid < size)
 		c[gid] = a[gid] + b[gid];
 }
 
@@ -23,7 +23,7 @@ int main(int argc, char** argv)
 	int size = 1 << 22;
 	int block_size = 128;
 
-	if (argc > 1)
+	if(argc > 1)
 		block_size = 1 << atoi(argv[1]);
 
 	printf("Entered block size : %d \n", block_size);
@@ -32,18 +32,18 @@ int main(int argc, char** argv)
 
 	printf("Input size : %d \n", size);
 
-	float * A, *B, *ref, *C;
+	float *A, *B, *ref, *C;
 
-	cudaMallocManaged((void **)&A, byte_size);
-	cudaMallocManaged((void **)&B, byte_size);
-	cudaMallocManaged((void **)&ref, byte_size);
+	cudaMallocManaged((void**)&A, byte_size);
+	cudaMallocManaged((void**)&B, byte_size);
+	cudaMallocManaged((void**)&ref, byte_size);
 
 	C = (float*)malloc(byte_size);
 
-	if (!A)
+	if(!A)
 		printf("host memory allocation error \n");
 
-	for (size_t i = 0; i < size; i++)
+	for(size_t i = 0; i < size; i++)
 	{
 		A[i] = i % 10;
 		A[i] = i % 7;
@@ -55,9 +55,14 @@ int main(int argc, char** argv)
 	dim3 grid((size + block.x - 1) / block.x);
 
 	printf("Kernel is lauched with grid(%d,%d,%d) and block(%d,%d,%d) \n",
-		grid.x, grid.y, grid.z, block.x, block.y, block.z);
+		   grid.x,
+		   grid.y,
+		   grid.z,
+		   block.x,
+		   block.y,
+		   block.z);
 
-	unified_memory << <grid, block >> > (A, B, ref, size);
+	unified_memory<<<grid, block>>>(A, B, ref, size);
 	gpuErrchk(cudaDeviceSynchronize());
 
 	compare_arrays(ref, C, size);
