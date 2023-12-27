@@ -15,7 +15,6 @@ __global__ void sum_reduction(int* v, int* v_r)
 
 	// Calculate thread ID
 	int tid = blockIdx.x * blockDim.x + threadIdx.x;
-
 	// Load elements AND do first add of reduction
 	// Vector now 2x as long as number of threads, so scale i
 	int i = blockIdx.x * (blockDim.x * 2) + threadIdx.x;

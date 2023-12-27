@@ -17,7 +17,6 @@ __device__ void warpReduce(volatile int* shmem_ptr, int t)
 	shmem_ptr[t] += shmem_ptr[t + 16];
 	shmem_ptr[t] += shmem_ptr[t + 8];
 	shmem_ptr[t] += shmem_ptr[t + 4];
-	shmem_ptr[t] += shmem_ptr[t + 2];
 	shmem_ptr[t] += shmem_ptr[t + 1];
 }
 

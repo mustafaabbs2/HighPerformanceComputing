@@ -10,9 +10,9 @@
 			"name": "MSVC_Base",
 			"displayName": "MSVC",
 			"description": "MSVC",
-			"generator": "Visual Studio 17 2022",
+			"generator": "Visual Studio 16 2019",
 			"architecture": "x64",
-			"toolset": "v142,version=14.29",
+			"toolset": "v142,version=14.20",
 			"binaryDir": "${sourceDir}/build",
 			"hidden": true,
 			"warnings": {

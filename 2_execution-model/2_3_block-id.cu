@@ -3,8 +3,6 @@
 //need these CUDA headers
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
-//Contains self written helper functions
-#include "../common/common.h"
 
 __global__ void kernel()
 {
