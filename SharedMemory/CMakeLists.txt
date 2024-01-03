@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(CPP_SOURCES
     GraphOptimization.cpp
+    PiApproximation.cpp
 )
 
 set(EXECUTABLE_SOURCES

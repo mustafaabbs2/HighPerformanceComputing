@@ -2,8 +2,9 @@
 #include <iostream>
 
 #include "GraphOptimization.h"
+#include "PiApproximation.h"
 
-int main()
+void runGraphTest()
 {
 	constexpr int n = 3;
 	const float d[n * n] = {
@@ -68,4 +69,41 @@ int main()
 		}
 		std::cout << "\n";
 	}
+}
+
+void runPiTest()
+{
+	long long numSteps = 100;
+
+    warmup();
+
+	auto start_time = std::chrono::high_resolution_clock::now();
+	auto pi = approximatePiSerial(numSteps);
+	auto end_time = std::chrono::high_resolution_clock::now();
+	auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+	std::cout << "approximatePiSerial: " << duration.count() << " microseconds" << std::endl;
+
+	start_time = std::chrono::high_resolution_clock::now();
+	pi = approximatePiParallelNoReduction(numSteps);
+	end_time = std::chrono::high_resolution_clock::now();
+	duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+	std::cout << "approximatePiParallelNoReduction: " << duration.count() << " microseconds"
+			  << std::endl;
+
+	start_time = std::chrono::high_resolution_clock::now();
+	pi = approximatePiParallel(numSteps);
+	end_time = std::chrono::high_resolution_clock::now();
+	duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+	std::cout << "approximatePiParallel: " << duration.count() << " microseconds" << std::endl;
+
+	std::cout << "Pi: " << pi << std::endl;
+}
+
+int main()
+{
+	//To test code in GraphOptimizer.cpp
+	// runGraphTest();
+
+	//test PI approximation
+	runPiTest();
 }
