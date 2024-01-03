@@ -4,7 +4,7 @@ project(SharedMemory LANGUAGES CXX)
 
 message("Configuring SharedMemory..")
 
-# Set C++ standard to C++11
+# Set C++ standard to C++17
 set(CMAKE_CXX_STANDARD 17)
 
 set(CPP_SOURCES
