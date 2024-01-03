@@ -73,7 +73,7 @@ void runGraphTest()
 
 void runPiTest()
 {
-	long long numSteps = 100;
+	size_t numSteps = 100;
 
 	warmup();
 
@@ -101,6 +101,21 @@ void runPiTest()
 	end_time = std::chrono::high_resolution_clock::now();
 	duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
 	std::cout << "approximatePiParallelPadded: " << duration.count() << " microseconds"
+			  << std::endl;
+
+	//This is super slow, wtf?
+	start_time = std::chrono::high_resolution_clock::now();
+	pi = approximatePiStdPar(numSteps);
+	end_time = std::chrono::high_resolution_clock::now();
+	duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+	std::cout << "approximatePiStdPar: " << duration.count() << " microseconds" << std::endl;
+
+	//EXTREMELY slow
+	start_time = std::chrono::high_resolution_clock::now();
+	pi = approximatePiParallelThreads(numSteps, 4);
+	end_time = std::chrono::high_resolution_clock::now();
+	duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+	std::cout << "approximatePiParallelThreads: " << duration.count() << " microseconds"
 			  << std::endl;
 
 	std::cout << "Pi: " << pi << std::endl;
