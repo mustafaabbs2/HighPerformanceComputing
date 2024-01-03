@@ -76,3 +76,34 @@ double approximatePiParallelNoReduction(long long numSteps)
 	double piApproximation = sum * step;
 	return piApproximation;
 }
+
+struct PaddedDouble
+{
+	double value;
+	char padding[64 - sizeof(double)]; // Ensure that each struct is 64 bytes to avoid false sharing
+};
+
+// Slows it down...
+double approximatePiParallelPadded(long long numSteps)
+{
+	double step = 1.0 / static_cast<double>(numSteps);
+	PaddedDouble sum = {0.0};
+
+#pragma omp parallel
+	{
+		PaddedDouble localSum = {0.0};
+
+#pragma omp for
+		for(long long i = 0; i < numSteps; ++i)
+		{
+			double x = (i + 0.5) * step;
+			localSum.value += 4.0 / (1.0 + x * x);
+		}
+
+#pragma omp critical
+		sum.value += localSum.value;
+	}
+
+	double piApproximation = sum.value * step;
+	return piApproximation;
+}

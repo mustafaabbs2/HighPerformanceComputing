@@ -75,7 +75,7 @@ void runPiTest()
 {
 	long long numSteps = 100;
 
-    warmup();
+	warmup();
 
 	auto start_time = std::chrono::high_resolution_clock::now();
 	auto pi = approximatePiSerial(numSteps);
@@ -95,6 +95,13 @@ void runPiTest()
 	end_time = std::chrono::high_resolution_clock::now();
 	duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
 	std::cout << "approximatePiParallel: " << duration.count() << " microseconds" << std::endl;
+
+	start_time = std::chrono::high_resolution_clock::now();
+	pi = approximatePiParallelPadded(numSteps);
+	end_time = std::chrono::high_resolution_clock::now();
+	duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+	std::cout << "approximatePiParallelPadded: " << duration.count() << " microseconds"
+			  << std::endl;
 
 	std::cout << "Pi: " << pi << std::endl;
 }
