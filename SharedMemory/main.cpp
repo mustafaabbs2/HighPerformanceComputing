@@ -42,7 +42,22 @@ int main()
 	step_v3(r, d, n);
 	end_time = std::chrono::high_resolution_clock::now();
 	duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
-	std::cout << "Execution Time V2: " << duration.count() << " microseconds" << std::endl;
+	std::cout << "Execution Time V3: " << duration.count() << " microseconds" << std::endl;
+
+#ifdef __GNUC__
+	start_time = std::chrono::high_resolution_clock::now();
+	step_v4(r, d, n);
+	end_time = std::chrono::high_resolution_clock::now();
+	duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+	std::cout << "Execution Time V4: " << duration.count() << " microseconds" << std::endl;
+
+	start_time = std::chrono::high_resolution_clock::now();
+	step_v5(r, d, n);
+	end_time = std::chrono::high_resolution_clock::now();
+	duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+	std::cout << "Execution Time V5: " << duration.count() << " microseconds" << std::endl;
+
+#endif
 
 	//print at the end
 	for(int i = 0; i < n; ++i)
