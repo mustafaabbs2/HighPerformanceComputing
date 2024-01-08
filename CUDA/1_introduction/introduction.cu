@@ -1,7 +1,31 @@
-#include <iostream>
-int main(void)
-{
+#include <stdio.h>
 
+__global__ void helloFromGPU()
+{
+	printf("Hello World from GPU! \n");
+}
+
+__global__ void add(int a, int b, int* c)
+{
+	*c = a + b;
+}
+
+void add_(int a, int b, int* c)
+{
+	int* dev_c;
+	cudaMalloc((void**)&dev_c, sizeof(int));
+	add<<<1, 1>>>(a, b, dev_c);
+	cudaMemcpy(c, dev_c, sizeof(int), cudaMemcpyDeviceToHost);
+	cudaFree(dev_c);
+}
+
+void helloFromGPU_()
+{
+	helloFromGPU<<<10, 1>>>();
+}
+
+void getDevice_()
+{
 	cudaDeviceProp prop;
 	int count = 5;
 	cudaGetDeviceCount(&count);
@@ -18,18 +42,15 @@ int main(void)
 	for(int i = 0; i < count; i++)
 	{
 		cudaGetDeviceProperties(&prop, i);
-		printf(" --- General Information for device %d ---\n", i);
 		printf("Name: %s\n", prop.name);
 		printf("Compute capability: %d.%d\n", prop.major, prop.minor);
 		printf("Clock rate: %d\n", prop.clockRate);
-		printf(" --- Memory Information for device %d ---\n", i);
-		printf("Total global mem: %ld\n", prop.totalGlobalMem);
-		printf("Total constant Mem: %ld\n", prop.totalConstMem);
-		printf("Max mem pitch: %ld\n", prop.memPitch);
+		printf("Total global memory %ld\n", prop.totalGlobalMem);
+		printf("Total constant memory %ld\n", prop.totalConstMem);
+		printf("Max memory pitch: %ld\n", prop.memPitch);
 		printf("Texture Alignment: %ld\n", prop.textureAlignment);
-		printf(" --- MP Information for device %d ---\n", i);
 		printf("Multiprocessor count: %d\n", prop.multiProcessorCount);
-		printf("Shared mem per mp: %ld\n", prop.sharedMemPerBlock);
+		printf("Shared memory per mp: %ld\n", prop.sharedMemPerBlock);
 		printf("Registers per mp: %d\n", prop.regsPerBlock);
 		printf("Threads in warp: %d\n", prop.warpSize);
 		printf("Max threads per block: %d\n", prop.maxThreadsPerBlock);
@@ -43,5 +64,4 @@ int main(void)
 			   prop.maxGridSize[2]);
 		printf("\n");
 	}
-	return 0;
 }

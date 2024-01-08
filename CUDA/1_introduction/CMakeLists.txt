@@ -5,31 +5,38 @@ project(Introduction LANGUAGES CXX CUDA) #this will automatically compile CUDA s
 message("Configuring Introduction..")
 
 set(CUDA_SOURCES
-    1_2_hello-world.cu
-    1_3_add-2-numbers.cu
-    1_4_get-device.cu
+    introduction.cu
 )
 
 set_source_files_properties(${CUDA_SOURCES} PROPERTIES LANGUAGE CUDA)
 
-set(EXECS
-    1_2_hello-world
-    1_3_add-2-numbers
-    1_4_get-device
+# Set C++ standard to C++17
+set(CMAKE_CXX_STANDARD 17)
+
+set(EXECUTABLE_SOURCES
+    main.cpp
 )
 
-foreach(EXEC ${EXECS})
-    add_executable(${EXEC} ${EXEC}.cu)
-    
+#Create static library (use shared for .dll)
+add_library(${PROJECT_NAME} STATIC
+    ${CUDA_SOURCES}
+)
+
+# Add executable target
+add_executable(HelloWorld
+    ${EXECUTABLE_SOURCES}
+)
+
+# Set CUDA flags
     # Add include directories
-    target_include_directories(${EXEC} PRIVATE 
-    ${CUDA_INCLUDE_DIRS})
+    target_include_directories(${PROJECT_NAME} PRIVATE ${CUDA_INCLUDE_DIRS})
+    target_link_libraries(${PROJECT_NAME}  ${CUDA_LIBRARIES})
 
-    target_link_libraries(${EXEC} 
-    ${CUDA_LIBRARIES})
 
-endforeach()
+target_link_libraries(HelloWorld PRIVATE ${PROJECT_NAME})
 
-	
+
+
+
 
 

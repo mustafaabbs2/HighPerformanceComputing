@@ -90,6 +90,7 @@
         "strstream": "cpp",
         "valarray": "cpp",
         "filesystem": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "execution": "cpp"
     }
 }
