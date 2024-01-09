@@ -4,10 +4,10 @@
 #include <iostream>
 
 #include "BCD.h"
-#include "utilityKernels.cuh"
+#include "utilityKernels.h"
 
 //CPU Kernel
-void updateCPU(
+void update(
 	std::vector<float>& u, std::vector<float>& u_prev, size_t N, float h, float dt, float alpha)
 {
 	int I;
@@ -53,15 +53,15 @@ __global__ void update(float* u, float* u_prev, int N, float h, float dt, float 
 	}
 }
 
-void updateGPU(float* u_d,
-			   float* u_prev_d,
-			   int N,
-			   float h,
-			   float dt,
-			   float alpha,
-			   int BSZ,
-			   dim3 dimGrid,
-			   dim3 dimBlock)
+void update_(float* u_d,
+			 float* u_prev_d,
+			 int N,
+			 float h,
+			 float dt,
+			 float alpha,
+			 int BSZ,
+			 dim3 dimGrid,
+			 dim3 dimBlock)
 
 {
 	update<<<dimGrid, dimBlock>>>(u_d, u_prev_d, N, h, dt, alpha, BSZ);

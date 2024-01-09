@@ -13,15 +13,6 @@ __global__ void add(int a, int b, int* c)
 	*c = a + b;
 }
 
-void add_(int a, int b, int* c)
-{
-	int* dev_c;
-	cudaMalloc((void**)&dev_c, sizeof(int));
-	add<<<1, 1>>>(a, b, dev_c);
-	cudaMemcpy(c, dev_c, sizeof(int), cudaMemcpyDeviceToHost);
-	cudaFree(dev_c);
-}
-
 __global__ void checkIndex()
 {
 	printf("threadIdx:(%d, %d, %d) blockIdx:(%d, %d, %d) blockDim:(%d, %d, %d) "
@@ -99,6 +90,15 @@ __global__ void printWarpIndex()
 void helloFromGPU_()
 {
 	helloFromGPU<<<10, 1>>>();
+}
+
+void add_(int a, int b, int* c)
+{
+	int* dev_c;
+	cudaMalloc((void**)&dev_c, sizeof(int));
+	add<<<1, 1>>>(a, b, dev_c);
+	cudaMemcpy(c, dev_c, sizeof(int), cudaMemcpyDeviceToHost);
+	cudaFree(dev_c);
 }
 
 void getDevice_()

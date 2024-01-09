@@ -1,4 +1,5 @@
 #include "BCD.h"
+#include "utilityKernels.h"
 #include <fstream>
 #include <iostream>
 #include <vector>
@@ -50,68 +51,10 @@ setupInitialCondition(size_t N, std::vector<float>& x, std::vector<float>& y, st
 	return h;
 }
 
-// void setupGPU()
-// {
-// 	int BLOCKSIZE = 16;
-
-// 	float et;
-// 	cudaEvent_t start, stop;
-// 	cudaEventCreate(&start);
-// 	cudaEventCreate(&stop);
-
-// 	cudaSetDevice(2);
-
-// 	// Allocate in GPU
-// 	float *u_d, *u_prev_d;
-
-// 	cudaMalloc((void**)&u_d, N * N * sizeof(float));
-// 	cudaMalloc((void**)&u_prev_d, N * N * sizeof(float));
-
-// 	// Copy to GPU
-// 	cudaMemcpy(u_d, u, N * N * sizeof(float), cudaMemcpyHostToDevice);
-
-// 	// Loop
-// 	dim3 dimGrid(int((N - 0.5) / BLOCKSIZE) + 1, int((N - 0.5) / BLOCKSIZE) + 1);
-// 	dim3 dimBlock(BLOCKSIZE, BLOCKSIZE);
-
-// 	//Start timing
-// 	cudaEventRecord(start);
-
-// 	for(int t = 0; t < steps; t++)
-// 	{
-// 		copy_array<<<dimGrid, dimBlock>>>(u_d, u_prev_d, N, BLOCKSIZE);
-// 		update<<<dimGrid, dimBlock>>>(u_d, u_prev_d, N, h, dt, alpha, BLOCKSIZE);
-// 	}
-
-// 	//Synchronize
-// 	cudaDeviceSynchronize();
-
-// 	//Stop
-// 	cudaEventRecord(stop);
-
-// 	//Sync events
-// 	cudaEventSynchronize(stop);
-
-// 	//Calculate et = elapsed time
-// 	cudaEventElapsedTime(&et, start, stop);
-
-// 	//Calculate et = elapsed time
-// 	cudaEventElapsedTime(&et, start, stop);
-
-// 	printf("The elapsed time is  %f milliseconds", et);
-
-// 	// Copy result back to host
-// 	cudaMemcpy(u, u_d, N * N * sizeof(float), cudaMemcpyDeviceToHost);
-
-// 	// Free device
-// 	cudaFree(u_d);
-// 	cudaFree(u_prev_d);
-// }
-
 int main()
 {
-
 	auto N = 128;
+	bool cpu = false;
 
 	auto dt = 0.00001;
 	auto alpha = 0.645;
@@ -125,9 +68,45 @@ int main()
 
 	auto h = setupInitialCondition(N, *x, *y, *u);
 
-	for(auto t = 0; t < steps; t++)
+	if(cpu)
 	{
-		updateCPU(*u, *u_prev, N, h, dt, alpha);
+		for(auto t = 0; t < steps; t++)
+		{
+			update(*u, *u_prev, N, h, dt, alpha);
+		}
+	}
+	else
+	{
+		int BLOCKSIZE = 16;
+
+		// Allocate in GPU
+		float *u_d, *u_prev_d;
+
+		cudaMalloc((void**)&u_d, N * N * sizeof(float));
+		cudaMalloc((void**)&u_prev_d, N * N * sizeof(float));
+
+		// Copy to GPU
+		cudaMemcpy(u_d, u.get(), N * N * sizeof(float), cudaMemcpyHostToDevice);
+
+		// Loop
+		dim3 dimGrid(int((N - 0.5) / BLOCKSIZE) + 1, int((N - 0.5) / BLOCKSIZE) + 1);
+		dim3 dimBlock(BLOCKSIZE, BLOCKSIZE);
+
+		for(int t = 0; t < steps; t++)
+		{
+			copy_array_(u_d, u_prev_d, N, BLOCKSIZE, dimGrid, dimBlock);
+			update_(u_d, u_prev_d, N, h, dt, alpha, BLOCKSIZE, dimGrid, dimBlock);
+		}
+
+		//Synchronize
+		cudaDeviceSynchronize();
+
+		// Copy result back to host
+		cudaMemcpy(u.get(), u_d, N * N * sizeof(float), cudaMemcpyDeviceToHost);
+
+		// Free device
+		cudaFree(u_d);
+		cudaFree(u_prev_d);
 	}
 
 	writeFile("test.txt", N, *x, *y, *u);
