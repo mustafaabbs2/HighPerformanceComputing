@@ -1,6 +1,11 @@
 #include <iostream>
 
+extern void initMPI();
+extern void finalizeMPI();
+
 int main()
 {
-	std::cout << "Hello World\n";
+	initMPI();
+
+	finalizeMPI();
 }

@@ -8,7 +8,7 @@ message("Configuring DistributedMemory..")
 set(CMAKE_CXX_STANDARD 17)
 
 set(CPP_SOURCES
-    Test.cpp
+    Multiport.cpp
 )
 
 set(EXECUTABLE_SOURCES
@@ -27,15 +27,16 @@ add_executable(BenchmarkMPI
 )
 
 
-if(WIN32)
+if(WIN32 OR UNIX)
     find_package(MPI REQUIRED)
     if(MPI_CXX_FOUND)
         target_link_libraries(${PROJECT_NAME}  PUBLIC ${MPI_CXX_LIBRARIES})
+        target_include_directories(${PROJECT_NAME}  PRIVATE ${MPI_CXX_INCLUDE_DIRS})
     else()
         message(FATAL_ERROR "MPI not found. Please make sure to install it.")
     endif()
 else() #for apple
-        message(FATAL_ERROR "Non Windows currently unsupported")
+        message(FATAL_ERROR "MacOS currently unsupported")
 endif()
 
 target_link_libraries(BenchmarkMPI PRIVATE ${PROJECT_NAME})
