@@ -220,6 +220,22 @@ __global__ void sumReductionUnrollLoops(int* v, int* v_r)
 	}
 }
 
+void matrixMultiplyCPU(int* a, int* b, int* c, int N)
+{
+	for(int i = 0; i < N; ++i)
+	{
+		for(int j = 0; j < N; ++j)
+		{
+			int sum = 0;
+			for(int k = 0; k < N; ++k)
+			{
+				sum += a[i * N + k] * b[k * N + j];
+			}
+			c[i * N + j] = sum;
+		}
+	}
+}
+
 __global__ void matrixMultiply(int* a, int* b, int* c, int N)
 {
 	int row = blockIdx.y * blockDim.y +
@@ -428,15 +444,29 @@ void matrixMultiply_()
 	dim3 block(threads, threads);
 	dim3 grid(blocks, blocks);
 
-	std::cout << "Naive Matrix Multiplication" << std::endl;
+	//V0//////////////////////
+
+	std::cout << "CPU Matrix Multiplication" << std::endl;
 	auto start_time = std::chrono::high_resolution_clock::now();
 
-	matrixMultiply<<<grid, block>>>(a, b, c, N);
+	matrixMultiplyCPU(a, b, c, N);
 
 	auto end_time = std::chrono::high_resolution_clock::now();
 
 	auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
 	std::cout << "Execution Time V0: " << duration.count() << " microseconds" << std::endl;
+
+	//V1//////////////////////
+
+	std::cout << "Naive GPU Matrix Multiplication" << std::endl;
+	start_time = std::chrono::high_resolution_clock::now();
+
+	matrixMultiply<<<grid, block>>>(a, b, c, N);
+
+	end_time = std::chrono::high_resolution_clock::now();
+
+	duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+	std::cout << "Execution Time V1: " << duration.count() << " microseconds" << std::endl;
 
 	cudaDeviceSynchronize();
 }

@@ -33,9 +33,9 @@ add_library(commonlib ${COMMON_FILES})
 
 add_subdirectory(1_Indexing)
 add_subdirectory(2_Reduction)
-add_subdirectory(3_memory-model)
-add_subdirectory(4_events)
-add_subdirectory(5_libraries)
+add_subdirectory(3_Memory)
+add_subdirectory(4_Evenets)
+add_subdirectory(5_LinearAlgebra)
 
 
 
