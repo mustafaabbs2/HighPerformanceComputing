@@ -1,4 +1,4 @@
-#include "BCD.cuh"
+#include "BCD.h"
 #include <fstream>
 #include <iostream>
 #include <vector>
@@ -15,13 +15,13 @@ void writeFile(std::string filename,
 		for(auto i = 0; i < N; i++)
 		{
 			I = N * j + i;
-			variable << x[I] << " " << y[I] << " " << u[I] << std::endl;
+			filehandle << x[I] << " " << y[I] << " " << u[I] << std::endl;
 		}
 
 	filehandle.close();
 }
 
-static void
+static float
 setupInitialCondition(size_t N, std::vector<float>& x, std::vector<float>& y, std::vector<float>& u)
 {
 	// Generate mesh and intial condition
@@ -46,6 +46,8 @@ setupInitialCondition(size_t N, std::vector<float>& x, std::vector<float>& y, st
 			}
 		}
 	}
+
+	return h;
 }
 
 // void setupGPU()
@@ -111,15 +113,21 @@ int main()
 
 	auto N = 128;
 
+	auto dt = 0.00001;
+	auto alpha = 0.645;
+	auto time = 0.4;
+	auto steps = ceil(time / dt);
+
 	auto x = std::make_unique<std::vector<float>>(N * N);
 	auto y = std::make_unique<std::vector<float>>(N * N);
 	auto u = std::make_unique<std::vector<float>>(N * N);
+	auto u_prev = std::make_unique<std::vector<float>>(N * N);
 
-	setupInitialCondition(N, *x, *y, *u);
+	auto h = setupInitialCondition(N, *x, *y, *u);
 
-	for(int t = 0; t < steps; t++)
+	for(auto t = 0; t < steps; t++)
 	{
-		update(u, u_prev, N, h, dt, alpha);
+		updateCPU(*u, *u_prev, N, h, dt, alpha);
 	}
 
 	writeFile("test.txt", N, *x, *y, *u);

@@ -3,11 +3,12 @@
 #include <fstream>
 #include <iostream>
 
-#include "BCD.cuh"
+#include "BCD.h"
 #include "utilityKernels.cuh"
 
 //CPU Kernel
-void update(float* u, float* u_prev, int N, float h, float dt, float alpha)
+void updateCPU(
+	std::vector<float>& u, std::vector<float>& u_prev, size_t N, float h, float dt, float alpha)
 {
 	int I;
 	for(int j = 0; j < N; j++)
@@ -50,4 +51,18 @@ __global__ void update(float* u, float* u_prev, int N, float h, float dt, float 
 			   alpha * dt / (h * h) *
 				   (u_prev[I + 1] + u_prev[I - 1] + u_prev[I + N] + u_prev[I - N] - 4 * u_prev[I]);
 	}
+}
+
+void updateGPU(float* u_d,
+			   float* u_prev_d,
+			   int N,
+			   float h,
+			   float dt,
+			   float alpha,
+			   int BSZ,
+			   dim3 dimGrid,
+			   dim3 dimBlock)
+
+{
+	update<<<dimGrid, dimBlock>>>(u_d, u_prev_d, N, h, dt, alpha, BSZ);
 }
