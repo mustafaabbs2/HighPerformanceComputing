@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.15.0 FATAL_ERROR)
 
-project(Events LANGUAGES CXX CUDA) #this will automatically compile CUDA sources with nvcc
+project(LinearAlgebra LANGUAGES CXX CUDA) #this will automatically compile CUDA sources with nvcc
 
-message("Configuring Events..")
+message("Configuring LinearAlgebra..")
 
 set(CUDA_SOURCES
-    Events.cu
+    linalg.cu
 )
 
 set_source_files_properties(${CUDA_SOURCES} PROPERTIES LANGUAGE CUDA)
@@ -23,7 +23,7 @@ add_library(${PROJECT_NAME} STATIC
 )
 
 # Add executable target
-add_executable(RunEvents
+add_executable(RunLinearAlgebra
     ${EXECUTABLE_SOURCES}
 )
 
@@ -33,7 +33,7 @@ add_executable(RunEvents
     target_link_libraries(${PROJECT_NAME}  ${CUDA_LIBRARIES})
 
 
-target_link_libraries(RunEvents PRIVATE ${PROJECT_NAME})
+target_link_libraries(RunLinearAlgebra PRIVATE ${PROJECT_NAME})
 
 
 

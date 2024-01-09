@@ -24,17 +24,10 @@ endif()
 
 set(CMAKE_CUDA_FLAGS "-std c++17 ${CMAKE_CUDA_FLAGS}")
 
-set(COMMON_FILES
-    common/common.cpp	
-)
-
-add_library(commonlib ${COMMON_FILES})
-
-
 add_subdirectory(1_Indexing)
 add_subdirectory(2_Reduction)
 add_subdirectory(3_Memory)
-add_subdirectory(4_Evenets)
+add_subdirectory(4_Events)
 add_subdirectory(5_LinearAlgebra)
 
 
