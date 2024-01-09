@@ -29,6 +29,9 @@ add_subdirectory(2_Reduction)
 add_subdirectory(3_Memory)
 add_subdirectory(4_Events)
 add_subdirectory(5_LinearAlgebra)
+add_subdirectory(6_CFD)
+
+
 
 
 

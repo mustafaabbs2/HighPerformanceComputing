@@ -1,6 +1,7 @@
 #include "BCD.cuh"
 #include <fstream>
 #include <iostream>
+#include <vector>
 
 void writeFile(std::string filename,
 			   const size_t N,
@@ -8,17 +9,16 @@ void writeFile(std::string filename,
 			   std::vector<float>& y,
 			   std::vector<float>& u)
 {
-	std::ofstream variable(filename);
-	for(size_t j = 0; j < N; j++)
-	{
-		for(int i = 0; i < N; i++)
+	int I;
+	std::ofstream filehandle(filename);
+	for(auto j = 0; j < N; j++)
+		for(auto i = 0; i < N; i++)
 		{
 			I = N * j + i;
 			variable << x[I] << " " << y[I] << " " << u[I] << std::endl;
 		}
-	}
 
-	variable.close();
+	filehandle.close();
 }
 
 static void
