@@ -6,15 +6,8 @@ message("Configuring ExecutionModel..")
 
 
 set(CUDA_SOURCES
-    2_1_blockdim.cu
-    2_2_thread-id.cu
-    2_3_block-id.cu
     2_4_sum_array.cu
     2_6_sumArray-cpu-gpu.cu
-    2_6_warp-id.cu
-    2_7_uniqueId_1d.cu
-    2_8_uniqueId_2d.cu
-    2_9_uniqueId_3d.cu
     2_10_profiling.cu
     2_11_warp-divergence.cu
     2_12_warp-unroll.cu
@@ -30,15 +23,8 @@ set(CUDA_SOURCES
 set_source_files_properties(${CUDA_SOURCES} PROPERTIES LANGUAGE CUDA)
 
 set(EXECS
-    2_1_blockdim
-    2_2_thread-id
-    2_3_block-id
     2_4_sum_array
     2_6_sumArray-cpu-gpu
-    2_6_warp-id
-    2_7_uniqueId_1d
-    2_8_uniqueId_2d
-    2_9_uniqueId_3d
     2_10_profiling
     2_11_warp-divergence
     2_12_warp-unroll

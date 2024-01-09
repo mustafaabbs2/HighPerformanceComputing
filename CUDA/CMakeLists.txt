@@ -31,7 +31,7 @@ set(COMMON_FILES
 add_library(commonlib ${COMMON_FILES})
 
 
-add_subdirectory(1_introduction)
+add_subdirectory(1_Indexing)
 add_subdirectory(2_execution-model)
 add_subdirectory(3_memory-model)
 add_subdirectory(4_events)
