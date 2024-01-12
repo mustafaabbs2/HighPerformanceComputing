@@ -27,7 +27,12 @@ add_executable(BenchmarkHybrid
 )
 
 # Define the variable kokkos_install_prefix with the desired value
-set(kokkos_install_prefix "D:\\Mustafa\\kokkos\\build")
+if(WIN32)
+    set(kokkos_install_prefix "D:\\Mustafa\\kokkos\\build")
+elseif(UNIX)
+    set(kokkos_install_prefix "/home/mustafaabbs2/kokkos/build")
+    set(CMAKE_CXX_COMPILER g++)
+endif()
 
 # Add the -DKokkos_ROOT option to the compile definitions
 set(Kokkos_DIR ${kokkos_install_prefix})
