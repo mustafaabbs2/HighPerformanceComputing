@@ -2,6 +2,9 @@
 #include <cstdio>
 #include <typeinfo>
 
+#include "KokkosCore.h"
+namespace Hybrid
+{
 struct hello_world
 {
 	KOKKOS_INLINE_FUNCTION
@@ -11,9 +14,9 @@ struct hello_world
 	}
 };
 
-int main(int argc, char* argv[])
+void helloWorld()
 {
-	Kokkos::initialize(argc, argv);
+	Kokkos::initialize();
 
 	printf("Hello World on Kokkos execution space %s\n",
 		   typeid(Kokkos::DefaultExecutionSpace).name());
@@ -22,3 +25,5 @@ int main(int argc, char* argv[])
 
 	Kokkos::finalize();
 }
+
+} // namespace Hybrid
