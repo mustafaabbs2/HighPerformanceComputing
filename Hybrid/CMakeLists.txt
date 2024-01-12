@@ -1,14 +1,14 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(DistributedMemory LANGUAGES CXX) 
+project(Hybrid LANGUAGES CXX) 
 
-message("Configuring DistributedMemory..")
+message("Configuring Hybrid..")
 
 # Set C++ standard to C++17
 set(CMAKE_CXX_STANDARD 17)
 
 set(CPP_SOURCES
-    Multiport.cpp
+    kokkosCore.cpp
 )
 
 set(EXECUTABLE_SOURCES
@@ -22,24 +22,24 @@ add_library(${PROJECT_NAME} STATIC
 )
 
 # Add executable target
-add_executable(BenchmarkMPI
+add_executable(BenchmarkHybrid
     ${EXECUTABLE_SOURCES}
 )
 
+# Define the variable kokkos_install_prefix with the desired value
+set(kokkos_install_prefix "D:\\Mustafa\\kokkos\\build")
+
+# Add the -DKokkos_ROOT option to the compile definitions
+set(Kokkos_DIR ${kokkos_install_prefix})
 
 if(WIN32 OR UNIX)
-    find_package(MPI REQUIRED)
-    if(MPI_CXX_FOUND)
-        target_link_libraries(${PROJECT_NAME}  PUBLIC ${MPI_CXX_LIBRARIES})
-        target_include_directories(${PROJECT_NAME}  PRIVATE ${MPI_CXX_INCLUDE_DIRS})
-    else()
-        message(FATAL_ERROR "MPI not found. Please make sure to install it.")
-    endif()
+    find_package(Kokkos REQUIRED)
+    target_link_libraries(${PROJECT_NAME} Kokkos::kokkos)
 else() #for apple
         message(FATAL_ERROR "MacOS currently unsupported")
 endif()
 
-target_link_libraries(BenchmarkMPI PRIVATE ${PROJECT_NAME})
+target_link_libraries(BenchmarkHybrid PRIVATE ${PROJECT_NAME})
 
 
 
