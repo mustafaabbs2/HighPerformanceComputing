@@ -4,6 +4,7 @@ project(HighPerformanceComputing LANGUAGES CXX CUDA)
 add_subdirectory(CUDA)
 add_subdirectory(SharedMemory)
 add_subdirectory(DistributedMemory)
-add_subdirectory(Hybrid)
-
+if(UNIX)
+    add_subdirectory(Hybrid)
+endif()
 
