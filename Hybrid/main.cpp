@@ -4,9 +4,12 @@
 
 int main()
 {
+
+	Core::init();
 	Core::helloWorld();
 
 	launchDAG();
 
+	Core::finalize();
 	return 0;
 }

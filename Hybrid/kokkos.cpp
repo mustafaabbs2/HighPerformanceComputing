@@ -14,16 +14,24 @@ struct hello_world
 	}
 };
 
+void init()
+{
+
+	Kokkos::initialize();
+}
+
+void finalize()
+{
+	Kokkos::finalize();
+}
+
 void helloWorld()
 {
-	Kokkos::initialize();
 
 	printf("Hello World on Kokkos execution space %s\n",
 		   typeid(Kokkos::DefaultExecutionSpace).name());
 
 	Kokkos::parallel_for("HelloWorld", 15, hello_world());
-
-	Kokkos::finalize();
 }
 
 } // namespace Core
