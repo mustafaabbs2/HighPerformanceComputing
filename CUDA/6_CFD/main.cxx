@@ -1,7 +1,9 @@
 #include "BCD.h"
 #include "utilityKernels.h"
+#include <cmath>
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <vector>
 
 void writeFile(std::string filename,

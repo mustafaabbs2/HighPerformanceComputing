@@ -1,8 +1,10 @@
+#include <algorithm>
 #include <cmath>
 #include <execution>
 #include <iostream>
 #include <numeric>
 #include <omp.h>
+#include <thread>
 #include <vector>
 
 //don't start without warmup if you're timing..

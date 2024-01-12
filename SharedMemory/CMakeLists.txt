@@ -28,7 +28,7 @@ add_executable(Benchmark
 )
 
 
-if(WIN32)
+if(WIN32 OR UNIX)
     # Find OpenMP package
     find_package(OpenMP REQUIRED)
 
@@ -37,7 +37,7 @@ if(WIN32)
         # Set OpenMP flags
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
         set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
-        target_link_libraries(${PROJECT_NAME}  PUBLIC OpenMP::OpenMP_CXX)
+        target_link_libraries(${PROJECT_NAME}  PUBLIC OpenMP::OpenMP_CXX tbb) 
     else()
         message(FATAL_ERROR "OpenMP not found. Please make sure to install it.")
     endif()

@@ -91,6 +91,16 @@
         "valarray": "cpp",
         "filesystem": "cpp",
         "queue": "cpp",
-        "execution": "cpp"
+        "execution": "cpp",
+        "clocale": "cpp",
+        "bit": "cpp",
+        "*.tcc": "cpp",
+        "concepts": "cpp",
+        "forward_list": "cpp",
+        "unordered_set": "cpp",
+        "string_view": "cpp",
+        "ranges": "cpp",
+        "stop_token": "cpp",
+        "cinttypes": "cpp"
     }
 }
