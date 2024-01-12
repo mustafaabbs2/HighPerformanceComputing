@@ -5,7 +5,7 @@ project(Events LANGUAGES CXX CUDA) #this will automatically compile CUDA sources
 message("Configuring Events..")
 
 set(CUDA_SOURCES
-    Events.cu
+    events.cu
 )
 
 set_source_files_properties(${CUDA_SOURCES} PROPERTIES LANGUAGE CUDA)
