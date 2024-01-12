@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Hybrid
+namespace Core
 {
 void helloWorld();
 }

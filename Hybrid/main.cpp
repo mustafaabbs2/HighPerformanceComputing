@@ -1,9 +1,12 @@
-#include "KokkosCore.h"
+#include "DAGParallel.h"
+#include "kokkos.h"
 #include <iostream>
 
 int main()
 {
-	Hybrid::helloWorld();
+	Core::helloWorld();
+
+	launchDAG();
 
 	return 0;
 }

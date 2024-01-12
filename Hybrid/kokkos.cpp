@@ -2,8 +2,8 @@
 #include <cstdio>
 #include <typeinfo>
 
-#include "KokkosCore.h"
-namespace Hybrid
+#include "kokkos.h"
+namespace Core
 {
 struct hello_world
 {
@@ -26,4 +26,4 @@ void helloWorld()
 	Kokkos::finalize();
 }
 
-} // namespace Hybrid
+} // namespace Core

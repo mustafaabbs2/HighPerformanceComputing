@@ -8,7 +8,9 @@ message("Configuring Hybrid..")
 set(CMAKE_CXX_STANDARD 17)
 
 set(CPP_SOURCES
-    kokkosCore.cpp
+    kokkos.cpp
+    DAGParallel.cpp
+
 )
 
 set(EXECUTABLE_SOURCES
