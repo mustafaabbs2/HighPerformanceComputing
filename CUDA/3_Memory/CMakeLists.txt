@@ -5,10 +5,11 @@ project(Memory LANGUAGES CXX CUDA) #this will automatically compile CUDA sources
 message("Configuring Memory..")
 
 set(CUDA_SOURCES
-    Memory.cu
+    memory.cu
 )
 
 set_source_files_properties(${CUDA_SOURCES} PROPERTIES LANGUAGE CUDA)
+
 
 # Set C++ standard to C++17
 set(CMAKE_CXX_STANDARD 17)
