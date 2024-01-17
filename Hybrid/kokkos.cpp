@@ -70,6 +70,46 @@ void vectorSum()
 	std::cout << "Sum (functor): " << result << std::endl;
 }
 
+//Part 1: In CPU execution space
+void daxpy()
+{
+	int a = 5;
+	int N = 1000;
+	int* x = new int[N];
+	int* y = new int[N];
+
+	for(int i = 0; i < N; i++)
+	{
+		x[i] = 1;
+		y[i] = 20;
+	}
+
+	Kokkos::parallel_for("daxpy", 1000, [=](int i) { y[i] = a * x[i] + y[i]; });
+	std::cout << "First element: " << y[0] << std::endl;
+}
+
+//Part 2: What if this was on the GPU?
+// Using views instead of raw pointers
+void daxpy_views()
+{
+	int a = 5;
+	int N = 1000;
+
+	// Use Kokkos::View for x and y
+	Kokkos::View<int*> x("x", N);
+	Kokkos::View<int*> y("y", N);
+
+	Kokkos::parallel_for(
+		"init_arrays", N, KOKKOS_LAMBDA(int i) {
+			x(i) = 1;
+			y(i) = 20;
+		});
+	Kokkos::parallel_for(
+		"daxpy", N, KOKKOS_LAMBDA(int i) { y(i) = a * x(i) + y(i); });
+
+	std::cout << "First element: " << y(0) << std::endl;
+}
+
 void yAx()
 {
 

@@ -10,8 +10,10 @@ int main()
 
 	// launchDAG();
 	Core::vectorSum();
-	Core::yAx();
+	Core::daxpy();
+	Core::daxpy_views();
 
+	Core::yAx();
 	Core::finalize();
 	return 0;
 }
