@@ -13,12 +13,13 @@ int main(int argc, char* argv[])
 	}
 	else
 	{
-		std::cerr << "Missing argument. Usage: ./BenchmarkHybrid cuda|openmp" << std::endl;
+		std::cerr << "Missing argument. Usage: ./BenchmarkHybrid cuda|openmp|threads" << std::endl;
 		return 1;
 	}
 
 	Core::init(arg);
-	Core::helloWorld();
+	// Core::helloWorld();
+	Core::getDevice()
 
 	// launchDAG();
 	Core::vectorSum();
