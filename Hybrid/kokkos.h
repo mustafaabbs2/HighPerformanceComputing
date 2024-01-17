@@ -1,8 +1,9 @@
 #pragma once
+#include <string>
 
 namespace Core
 {
-void init();
+void init(std::string arg);
 void helloWorld();
 void vectorSum();
 void daxpy();

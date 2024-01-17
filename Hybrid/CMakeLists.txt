@@ -28,15 +28,33 @@ add_executable(BenchmarkHybrid
     ${EXECUTABLE_SOURCES}
 )
 
+
+
+set(CUDA_ON FALSE)
+
 # Define the variable kokkos_install_prefix with the desired value
 if(WIN32)
-    set(kokkos_install_prefix "D:\\Mustafa\\kokkos\\build")
+    if(CUDA_ON)
+        set(kokkos_install_prefix "D:\\Mustafa\\kokkos\\build-cuda-openmp")
+    else()
+        set(kokkos_install_prefix "D:\\Mustafa\\kokkos\\build-openmp")
+    endif()
 elseif(UNIX)
-    set(kokkos_install_prefix "/home/mustafaabbs2/kokkos/build")
-    set(CMAKE_CXX_COMPILER g++)
+    if(CUDA_ON)
+        set(kokkos_install_prefix "/home/mustafaabbs2/kokkos/build-cuda-openmp") #this has cuda for the device and pthreads for the host
+        set(CMAKE_CXX_COMPILER "/home/mustafaabbs2/kokkos/kokkos/bin/nvcc_wrapper") 
+        #All current versions of the NVCC compiler have shortcomings when used as the main compiler for a project, 
+        #in particular when part of a complex build system.
+        #For example, it does not understand most GCC command-line options,
+        #which must be prepended by the -Xcompiler flag when calling NVCC
+        set_target_properties(${PROJECT_NAME} PROPERTIES CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -expt-relaxed-constexpr")
+    else()
+        #set(kokkos_install_prefix "/home/mustafaabbs2/kokkos/build-threads")
+        set(kokkos_install_prefix "/home/mustafaabbs2/kokkos/build-openmp")
+        set(CMAKE_CXX_COMPILER g++) 
+    endif()
 endif()
 
-# Add the -DKokkos_ROOT option to the compile definitions
 set(Kokkos_DIR ${kokkos_install_prefix})
 
 if(WIN32 OR UNIX)

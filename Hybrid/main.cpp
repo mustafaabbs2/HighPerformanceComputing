@@ -1,11 +1,23 @@
 #include "DAGParallel.h"
 #include "kokkos.h"
 #include <iostream>
+#include <string>
 
-int main()
+int main(int argc, char* argv[])
 {
 
-	Core::init();
+	std::string arg;
+	if(argc >= 2)
+	{
+		arg = std::string(argv[1]);
+	}
+	else
+	{
+		std::cerr << "Missing argument. Usage: ./BenchmarkHybrid cuda|openmp" << std::endl;
+		return 1;
+	}
+
+	Core::init(arg);
 	Core::helloWorld();
 
 	// launchDAG();

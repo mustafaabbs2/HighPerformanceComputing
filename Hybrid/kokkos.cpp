@@ -34,8 +34,23 @@ struct vector_sum
 
 //end functors
 
-void init()
+void init(std::string arg)
 {
+	// Kokkos::InitArguments init_args;
+
+	// if(arg == "cuda")
+	// {
+	// 	init_args.device(Kokkos::Cuda);
+	// }
+	// else if(arg == "openmp")
+	// {
+	// 	init_args.num_threads(4); // Set the number of OpenMP threads
+	// }
+	// else
+	// {
+	// 	std::cerr << "Invalid argument. Usage: ./your_executable cuda|openmp" << std::endl;
+	// 	return 1;
+	// }
 
 	Kokkos::initialize();
 }
@@ -49,6 +64,8 @@ void getDevice()
 {
 	auto execution_space = Kokkos::DefaultExecutionSpace();
 	std::cout << "Execution space: " << execution_space.name() << std::endl;
+
+	std::cout << "Kokkos version: " << KOKKOS_VERSION << std::endl;
 }
 
 void helloWorld()
