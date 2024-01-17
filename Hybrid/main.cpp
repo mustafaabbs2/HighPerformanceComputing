@@ -8,7 +8,9 @@ int main()
 	Core::init();
 	Core::helloWorld();
 
-	launchDAG();
+	// launchDAG();
+	Core::vectorSum();
+	Core::yAx();
 
 	Core::finalize();
 	return 0;
