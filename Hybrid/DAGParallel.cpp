@@ -30,19 +30,9 @@ struct TaskC
 
 void launchDAG()
 {
-	Kokkos::initialize();
 
-//Nope not working
-	// // Create tasks
-	// TaskA taskA;
-	// TaskB taskB;
-	// TaskC taskC;
-
-	// // Execute tasks in parallel
-	// Kokkos::parallel_invoke(taskA, taskB);
-
-	// // Wait for taskA and taskB to complete before executing taskC
-	// Kokkos::parallel_invoke(Kokkos::TaskSingle(TopoOrderedTag{}, taskC));
-
-	Kokkos::finalize();
+	// Create tasks
+	TaskA taskA;
+	TaskB taskB;
+	TaskC taskC;
 }
